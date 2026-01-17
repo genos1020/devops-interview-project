@@ -1,0 +1,59 @@
+# --------------------------
+# Claude Code / AI 工具暫存
+# --------------------------
+.claude/
+
+# --------------------------
+# Docker & local images
+# --------------------------
+*.tar
+*.log
+docker-compose.override.yml
+
+# --------------------------
+# IDE / 編輯器暫存
+# --------------------------
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# --------------------------
+# 系統檔 / 暫存
+# --------------------------
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# --------------------------
+# Terraform / state files
+# --------------------------
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# --------------------------
+# Helm / template / local output
+# --------------------------
+helm/tmp/
+helm/release/*.tgz
+
+# --------------------------
+# K8s / local config / secrets
+# --------------------------
+k8s/*.local.yaml
+k8s/secrets.yaml
+
+# --------------------------
+# Logs / debug
+# --------------------------
+logs/
+*.log
+
+# --------------------------
+# Node / Python / 其他語言暫存（如果日後用到）
+# --------------------------
+node_modules/
+__pycache__/
+*.pyc
