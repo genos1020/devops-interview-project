@@ -19,8 +19,8 @@ jobs:
 
     - name: Build and Push Image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:${{ github.sha }} .
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:${{ github.sha }}
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/genos-devops-app:${{ github.sha }} .
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/genos-devops-app:${{ github.sha }}
 
     - name: Setup kubectl
       uses: azure/setup-kubectl@v4
