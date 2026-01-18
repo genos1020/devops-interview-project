@@ -1,9 +1,12 @@
 replicaCount: 2
 
 image:
-  repository: nginx
-  tag: stable
-  pullPolicy: IfNotPresent
+  repository: genos1020/genos-devops-app
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: dockerhub-secret
 
 autoscaling:
   enabled: false
@@ -26,7 +29,7 @@ ingress:
   className: ""
   annotations: {}
   hosts:
-    - host: nginx.local
+    - host: devops.localhost
       paths:
         - path: /
           pathType: Prefix
