@@ -1,9 +1,10 @@
-name: CI - Docker Build
+name: CI - Docker Build (disabled)
 
-on:
-  push:
-    branches:
-      - main
+on: 
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   build:
