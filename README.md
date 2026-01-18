@@ -14,3 +14,33 @@
 - [ ] CI/CD with GitHub Actions
 - [ ] Terraform provision EKS
 - [ ] GitOps
+
+
+## CI/CD Pipeline Architecture
+Developer
+   |
+   | git push
+   v
+GitHub Repository
+   |
+   | GitHub Actions (CI/CD)
+   |
+   +--> CI Stage
+   |      - Checkout source code
+   |      - Docker build image
+   |      - Tag image with Git SHA
+   |      - Push image to Docker Hub
+   |
+   +--> CD Stage
+          - Load KUBECONFIG from GitHub Secrets
+          - Helm upgrade --install
+          - Update image.tag to new version
+          - Kubernetes Deployment rolling update
+   |
+   v
+Kubernetes Cluster
+   |
+   | Service / Ingress
+   v
+User Request (Browser / curl)
+
