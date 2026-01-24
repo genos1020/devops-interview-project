@@ -43,3 +43,15 @@ module "eks" {
 }
 
 data "aws_caller_identity" "current" {}
+
+resource "null_resource" "update_kubeconfig" {
+  depends_on = [module.eks]
+
+  triggers = {
+    cluster_endpoint = module.eks.cluster_endpoint
+  }
+
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --region ${var.region} --name ${var.cluster_name}"
+  }
+}

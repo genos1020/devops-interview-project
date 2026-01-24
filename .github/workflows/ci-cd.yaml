@@ -54,7 +54,7 @@ jobs:
         run: |
           aws eks update-kubeconfig \
             --region ${{ secrets.AWS_REGION }} \
-            --name devops-day9-eks
+            --name devops-eks
 
       - name: Deploy with Helm
         run: |
