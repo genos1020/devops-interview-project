@@ -1,0 +1,9 @@
+alertmanager:
+  alertmanagerSpec:
+    # 1. 告訴 Operator 使用你自定義的 Secret 名稱
+    configSecret: alertmanager-config
+
+    # 2. 掛載存放 Token 的 Secret
+    # 這會自動掛載到 /etc/alertmanager/secrets/alertmanager-telegram
+    secrets:
+      - alertmanager-telegram

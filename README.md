@@ -88,7 +88,10 @@ image:
 
 ### 5️⃣ 手動部署指令
 - 安全與環境邊界（k3d 無法自動 CD）
+```bash
 helm upgrade --install devops ./helm/nginx-chart \
   --namespace devops \
   --create-namespace \
   --set image.tag=<commit-sha>
+```
+

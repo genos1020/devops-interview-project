@@ -1,4 +1,4 @@
-name: CI-CD (Day8 Advanced)
+name: CI-CD
 
 on:
   push:
