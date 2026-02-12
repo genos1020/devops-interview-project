@@ -7,3 +7,32 @@ alertmanager:
     # 這會自動掛載到 /etc/alertmanager/secrets/alertmanager-telegram
     secrets:
       - alertmanager-telegram
+
+# ---- 關閉 EKS 託管的 control plane 元件監控 ----
+# 這些元件由 AWS 管理，無法 scrape，開著只會產生誤報
+kubeScheduler:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+# ---- 自訂告警規則 ----
+additionalPrometheusRulesMap:
+  app-alerts:
+    groups:
+      - name: app-down
+        rules:
+          - alert: AppDown
+            expr: up{job="my-nginx"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "應用程式 {{ $labels.instance }} 已停止運行"
+              description: "{{ $labels.job }} 的 {{ $labels.instance }} 已經 down 超過 1 分鐘"
