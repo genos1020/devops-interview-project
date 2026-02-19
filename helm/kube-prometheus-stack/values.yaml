@@ -36,3 +36,10 @@ additionalPrometheusRulesMap:
             annotations:
               summary: "應用程式 {{ $labels.instance }} 已停止運行"
               description: "{{ $labels.job }} 的 {{ $labels.instance }} 已經 down 超過 1 分鐘"
+          - alert: MyNginxScaledToZero
+            expr: kube_deployment_spec_replicas{deployment="my-nginx",namespace="default"} == 0
+            for: 0s
+            labels:
+              severity: critical
+            annotations:
+              summary: "my-nginx replicas is 0"
