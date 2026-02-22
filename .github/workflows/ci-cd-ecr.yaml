@@ -68,12 +68,12 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          # --wait:  等待 pods 就緒，失敗就報錯（但不 rollback）
           # --atomic:    部署失敗時自動 rollback 到上一個成功版本
           # --timeout:   等待 pods 就緒的最長時間，超時視為失敗並觸發 rollback
           helm upgrade my-nginx ./helm/nginx-chart \
             --install \
-            --atomic \
-            --timeout 5m \
+            --wait \
             --namespace default \
             --set image.repository=${{ needs.ci.outputs.ecr-registry }}/$REPO_NAME \
             --set image.tag=${{ needs.ci.outputs.image-tag }}
