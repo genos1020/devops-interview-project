@@ -1,9 +1,9 @@
-name: CI-CD (disabled - replaced by ci-cd-ecr.yaml)
+name: CI-CD (ECR)
 
 on:
-  workflow_dispatch: # 已停用自動觸發
-  # push:
-  #   branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   # -----------------------
@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image-tag: ${{ steps.set-tag.outputs.IMAGE_TAG }}
+      ecr-registry: ${{ steps.login-ecr.outputs.registry }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,25 +21,32 @@ jobs:
         id: set-tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
-      - name: Login Docker Hub
-        uses: docker/login-action@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Build and Push Image
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPO_NAME: devops-interview-app
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/genos-devops-app:${{ github.sha }} -f docker/Dockerfile .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/genos-devops-app:${{ github.sha }}
+          docker build -t $ECR_REGISTRY/$REPO_NAME:${{ github.sha }} -f docker/Dockerfile .
+          docker push $ECR_REGISTRY/$REPO_NAME:${{ github.sha }}
 
   # -----------------------
-  # CD Job (手動 / 避免自動部署 k3d)
+  # CD Job
   # -----------------------
   cd:
     name: CD - Deploy to EKS
     needs: ci
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -58,7 +66,12 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          # --atomic:    部署失敗時自動 rollback 到上一個成功版本
+          # --timeout:   等待 pods 就緒的最長時間，超時視為失敗並觸發 rollback
           helm upgrade my-nginx ./helm/nginx-chart \
             --install \
+            --atomic \
+            --timeout 5m \
             --namespace default \
+            --set image.repository=${{ needs.ci.outputs.ecr-registry }}/genos-devops-app \
             --set image.tag=${{ needs.ci.outputs.image-tag }}
