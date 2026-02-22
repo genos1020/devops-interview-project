@@ -29,15 +29,15 @@ additionalPrometheusRulesMap:
       - name: app-down
         rules:
           - alert: AppDown
-            expr: up{job="my-nginx"} == 0
+            expr: kube_deployment_status_replicas_available{deployment="my-nginx-nginx-chart",namespace="default"} == 0
             for: 1m
             labels:
               severity: critical
             annotations:
-              summary: "應用程式 {{ $labels.instance }} 已停止運行"
-              description: "{{ $labels.job }} 的 {{ $labels.instance }} 已經 down 超過 1 分鐘"
+              summary: "應用程式無可用 Pod 超過 1 分鐘"
+              description: "deployment my-nginx-nginx-chart 已無可用 replicas 超過 1 分鐘"
           - alert: MyNginxScaledToZero
-            expr: kube_deployment_spec_replicas{deployment="my-nginx",namespace="default"} == 0
+            expr: kube_deployment_spec_replicas{deployment="my-nginx-nginx-chart",namespace="default"} == 0
             for: 0s
             labels:
               severity: critical

@@ -1,12 +1,20 @@
 replicaCount: 2
 
 image:
-  repository: genos1020/genos-devops-app
+  repository: 339713143521.dkr.ecr.ap-northeast-1.amazonaws.com/devops-interview-app
   tag: latest
   pullPolicy: Always
 
 imagePullSecrets:
-  - name: dockerhub-secret
+  - name: ecr-secret
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "300m"
+    memory: "256Mi"
 
 autoscaling:
   enabled: false
@@ -17,6 +25,11 @@ autoscaling:
 service:
   type: ClusterIP
   port: 80
+  extraPorts:
+    - name: metrics
+      port: 9113
+      targetPort: 9113
+      protocol: TCP
 
 serviceAccount:
   create: true
@@ -27,10 +40,22 @@ serviceAccount:
 ingress:
   enabled: true
   className: ""
-  annotations: {}
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
   hosts:
-    - host: devops.localhost
+    - host: ""
       paths:
         - path: /
           pathType: Prefix
   tls: []
+
+extraContainers:
+  - name: nginx-exporter
+    image: nginx/nginx-prometheus-exporter:latest
+    args:
+      - --nginx.scrape-uri=http://localhost/stub_status
+    ports:
+      - name: metrics
+        containerPort: 9113

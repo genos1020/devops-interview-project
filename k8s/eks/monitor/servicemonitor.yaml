@@ -8,7 +8,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: my-nginx
+      app.kubernetes.io/instance: my-nginx
   namespaceSelector:
     matchNames:
     - default
