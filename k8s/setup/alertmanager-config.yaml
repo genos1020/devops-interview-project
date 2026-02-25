@@ -15,8 +15,13 @@ stringData:
       group_wait: 30s
       group_interval: 5m
       repeat_interval: 4h
+      routes:
+      - receiver: "null"           # InfoInhibitor 是內建的雜訊 alert，直接丟棄
+        matchers:
+        - alertname = "InfoInhibitor"
 
     receivers:
+    - name: "null"                 # 空 receiver，什麼都不做
     - name: telegram
       telegram_configs:
       - bot_token_file: /etc/alertmanager/secrets/alertmanager-telegram/TELEGRAM_TOKEN
