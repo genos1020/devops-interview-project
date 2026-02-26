@@ -9,22 +9,18 @@
 ```mermaid
 graph TD
     Dev[Developer] -->|git push| GH[GitHub Actions]
-    Internet[Internet] -->|HTTP| ALB
+    Internet[Internet] -->|HTTP| ALB[AWS ALB]
 
     subgraph CI/CD Pipeline
         GH -->|1. Build & Push| ECR[Amazon ECR]
-        GH -->|2. Helm Upgrade| Pod
     end
 
     subgraph AWS EKS Cluster
-        ALB[AWS ALB] --> Ingress[ALB Ingress Controller]
-        Ingress --> SVC[Service ClusterIP]
+        Ingress[ALB Ingress Controller] --> SVC[Service ClusterIP]
         SVC --> Pod[Nginx + nginx-exporter]
-        ECR -->|pull via Node IAM| Pod
 
         subgraph Monitoring - monitoring namespace
             SM[ServiceMonitor] -->|defines scrape target| Prom[Prometheus]
-            Prom -->|scrape :9113/metrics| Pod
             Prom -->|firing alert| AM[Alertmanager]
             AM -->|Telegram API| TG[Telegram Bot]
             Prom --> Grafana
@@ -36,6 +32,11 @@ graph TD
         DDB[DynamoDB - State Lock]
         IAM[IAM Role - IRSA for ALB Controller]
     end
+
+    ALB --> Ingress
+    GH -->|2. Helm Upgrade| Pod
+    ECR -->|pull via Node IAM| Pod
+    Prom -->|scrape :9113/metrics| Pod
 ```
 
 ---
