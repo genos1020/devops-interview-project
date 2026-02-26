@@ -11,15 +11,15 @@ graph TD
     Dev[Developer] -->|git push| GH[GitHub Actions]
 
     subgraph CI/CD Pipeline
-        GH -->|1. Build Image| ECR[Amazon ECR\nPrivate Registry]
+        GH -->|1. Build Image| ECR[Amazon ECR]
         GH -->|2. Helm Upgrade| EKS
     end
 
     subgraph AWS EKS Cluster
-        EKS --> ALB[AWS ALB\nInternet-facing]
-        ALB --> Ingress[Ingress Controller\nAWS Load Balancer Controller]
-        Ingress --> SVC[Service\nClusterIP]
-        SVC --> Pod[Nginx Pod\nnginx + nginx-exporter]
+        EKS --> ALB[AWS ALB]
+        ALB --> Ingress[ALB Ingress Controller]
+        Ingress --> SVC[Service ClusterIP]
+        SVC --> Pod[Nginx Pod + nginx-exporter]
 
         subgraph Monitoring - monitoring namespace
             SM[ServiceMonitor] -->|scrape :9113/metrics| Pod
@@ -31,9 +31,9 @@ graph TD
     end
 
     subgraph AWS Infrastructure - Terraform
-        S3[S3 Bucket\nTerraform State]
-        DDB[DynamoDB\nState Lock]
-        IAM[IAM Role\nIRSA for ALB Controller]
+        S3[S3 Bucket - Terraform State]
+        DDB[DynamoDB - State Lock]
+        IAM[IAM Role - IRSA for ALB Controller]
     end
 
     ECR -->|imagePullSecret| Pod
