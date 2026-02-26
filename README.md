@@ -9,34 +9,33 @@
 ```mermaid
 graph TD
     Dev[Developer] -->|git push| GH[GitHub Actions]
+    Internet[Internet] -->|HTTP| ALB
 
     subgraph CI/CD Pipeline
-        GH -->|1. Build Image| ECR[Amazon ECR]
-        GH -->|2. Helm Upgrade| EKS
+        GH -->|1. Build & Push| ECR[Amazon ECR]
+        GH -->|2. Helm Upgrade| Pod
     end
 
     subgraph AWS EKS Cluster
-        EKS --> ALB[AWS ALB]
-        ALB --> Ingress[ALB Ingress Controller]
+        ALB[AWS ALB] --> Ingress[ALB Ingress Controller]
         Ingress --> SVC[Service ClusterIP]
-        SVC --> Pod[Nginx Pod + nginx-exporter]
+        SVC --> Pod[Nginx + nginx-exporter]
+        ECR -->|pull via Node IAM| Pod
 
         subgraph Monitoring - monitoring namespace
-            SM[ServiceMonitor] -->|scrape :9113/metrics| Pod
-            Prom[Prometheus] --> SM
+            SM[ServiceMonitor] -->|defines scrape target| Prom[Prometheus]
+            Prom -->|scrape :9113/metrics| Pod
             Prom -->|firing alert| AM[Alertmanager]
-            AM -->|webhook| TG[Telegram Bot]
+            AM -->|Telegram API| TG[Telegram Bot]
             Prom --> Grafana
         end
     end
 
-    subgraph AWS Infrastructure - Terraform
+    subgraph AWS Infra - Terraform
         S3[S3 Bucket - Terraform State]
         DDB[DynamoDB - State Lock]
         IAM[IAM Role - IRSA for ALB Controller]
     end
-
-    ECR -->|imagePullSecret| Pod
 ```
 
 ---
@@ -167,7 +166,7 @@ helm upgrade --install aws-load-balancer-controller \
 bash scripts/setup-monitoring.local.sh
 
 # Step 6：部署應用（擇一）
-git push                    # 觸發 CI/CD（推薦）
+git push                    # 觸發 CI/CD
 # 或
 helm upgrade --install my-nginx ./helm/nginx-chart
 ```
