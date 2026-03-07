@@ -1,4 +1,4 @@
-# DevOps Interview Project
+# Kubernetes CI/CD Platform on AWS
 
 一個完整的 Production-level DevOps 實作專案，涵蓋從基礎設施建置到應用部署、監控告警的完整流程。
 
