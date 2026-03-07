@@ -41,6 +41,24 @@ graph TD
 
 ---
 
+## 成果截圖
+
+### CI/CD Pipeline
+![CI/CD Pipeline](docs/screenshots/cicd-pipeline.png)
+
+### 網頁部署結果
+![Webpage](docs/screenshots/webpage.png)
+
+### Telegram 告警通知
+![Alert MyNginxScaledToZero](docs/screenshots/alert-scaled-to-zero.png)
+![Alert AppDown](docs/screenshots/alert-appdown.png)
+
+### Grafana 監控 Dashboard
+![Grafana Namespace Pods](docs/screenshots/grafana-namespace-pods.png)
+![Grafana Cluster](docs/screenshots/grafana-cluster.png)
+
+---
+
 ## 技術棧
 
 | 類別 | 工具 |
