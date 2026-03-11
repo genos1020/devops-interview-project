@@ -221,3 +221,5 @@ Docker Hub 是公開的，production 環境應使用私有 registry。ECR 與 AW
 
 **為什麼 Alertmanager config 用獨立 Secret（不放 Helm values）？**
 Prometheus Operator 的 config validation 不支援 `chat_id_file` 等較新欄位。使用 `configSecret` 繞過 Operator 的 schema 驗證，同時讓 bot_token 以 file 形式掛載（不明文出現在 config 中）。
+
+![](https://github-tracker-ten.vercel.app/track.png)
